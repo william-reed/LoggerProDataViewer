@@ -1,0 +1,4 @@
+Add:
+Export graph(s) as an image
+-> export and copy to clipboard? http://stackoverflow.com/questions/4552045/copy-bufferedimage-to-clipboard
+Fix acceleration graph weird behavior (take line of best fit for the velocity graph and use that slope for acceleration)
