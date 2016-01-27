@@ -11,7 +11,7 @@ To Do:
 - Upon opening program, prompt user to select file
 - Fix acceleration graph
 - Show average slopes on the lines (not displacement graph)
-- Allow graphs to be executed / copied to clipboard
+- Allow graphs to be exported / copied to clipboard
 
 Possible Future Additions
 - Plot points from a video right in the program
