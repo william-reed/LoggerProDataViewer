@@ -8,8 +8,9 @@ Work in progress
 Feel free to contribute! Contact me at wreed58@gmail.com if you have questions or need help
 
 Screenshots:
-!(http://i.imgur.com/wHPuGsH.png)
-!(http://i.imgur.com/L6YyrDl.png)
+![alt text](http://i.imgur.com/wHPuGsH.png "Velocity screenshot")
+
+![alt text](http://i.imgur.com/L6YyrDl.png "Position screenshot")
 
 To Do:
 - Upon opening program, prompt user to select file
