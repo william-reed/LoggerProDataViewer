@@ -7,12 +7,17 @@ Work in progress
 
 Feel free to contribute! Contact me at wreed58@gmail.com if you have questions or need help
 
+Screenshots:
+!(http://i.imgur.com/wHPuGsH.png)
+!(http://i.imgur.com/L6YyrDl.png)
+
 To Do:
 - Upon opening program, prompt user to select file
 - Fix acceleration graph
 - Show average slopes on the lines (not displacement graph)
-- Allow graphs to be exported / copied to clipboard
+- ~~Allow graphs to be exported / copied to clipboard~~
 - Allow graphs to be printed
+- Right click menu with Copy, Export, Print options
 
 Possible Future Additions
 - Plot points from a video right in the program
