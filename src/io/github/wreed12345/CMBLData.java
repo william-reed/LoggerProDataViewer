@@ -31,7 +31,7 @@ public class CMBLData {
 		yPosition = new ArrayList<Double>();
 		parseData(filePath);
 		if((time.size() != xPosition.size()) || (xPosition.size() != yPosition.size())) {
-			throw new RuntimeException("Values for Time, X/Y Position are not of the same size!");
+			//throw new RuntimeException("Values for Time, X/Y Position are not of the same size!");
 		}
 		amountOfValues = time.size();
 
