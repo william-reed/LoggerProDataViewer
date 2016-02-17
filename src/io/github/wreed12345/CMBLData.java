@@ -1,11 +1,22 @@
 package io.github.wreed12345;
 
-import java.util.List;
-import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Contains all usable data from a CMBL file
@@ -19,6 +30,10 @@ public class CMBLData {
 	private List<Double> yPosition;
 	private final int amountOfValues;
 	
+	public static void main(String args[]) {
+		new CMBLData("assets/acceleratingcar.cmbl");
+	}
+	
 	/**
 	 * Creates a new data object for a CMBL File
 	 * 
@@ -29,85 +44,80 @@ public class CMBLData {
 		time = new ArrayList<Double>();
 		xPosition = new ArrayList<Double>();
 		yPosition = new ArrayList<Double>();
-		parseData(filePath);
+		try {
+			parseData(filePath);
+		} catch(Exception e ){
+			e.printStackTrace();
+		}
 		if((time.size() != xPosition.size()) || (xPosition.size() != yPosition.size())) {
-			//throw new RuntimeException("Values for Time, X/Y Position are not of the same size!");
+			throw new RuntimeException("Values for Time, X/Y Position are not of the same size!");
 		}
 		amountOfValues = time.size();
 
 	}
 
 	/**
-	 * ENUM to keep track of what the parser is looking for
-	 */
-	private enum CurrentIteration {
-		TIME, XPOSITION, YPOSITION;
-	}
-
-	/*
-	 * Order of numbers: 1. Time values 2. X values in meters 3. Y values in
-	 * meters (not sure if units are always meters, sometimes may be mm for some
-	 * reason)
-	 */
-
-	/**
 	 * Parses all usable data from the file
 	 * 
 	 * @param filePath
 	 *            path to the file
+	 * @throws ParserConfigurationException 
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws FileNotFoundException 
+	 * @throws XPathExpressionException 
 	 */
 	private void parseData(String filePath) {
-		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-			String line;
-			CurrentIteration curit = CurrentIteration.TIME;
-			PRELIM: while ((line = br.readLine()) != null) {
-				if (line.contains("<ColumnCells>")) {
-					boolean getNumbers = true;
-					while (getNumbers) {
-						line = br.readLine();
-						if (line.contains("<")) {
-							getNumbers = false;
-							switch (curit) {
-							case TIME:
-								curit = CurrentIteration.XPOSITION;
-								break;
-							case XPOSITION:
-								curit = CurrentIteration.YPOSITION;
-								break;
-							case YPOSITION:
-								break PRELIM;
-							default:
-								throw new RuntimeException("More than three sets of numbers were found");
-							}
-							break;
-						}
-						switch (curit) {
-						case TIME:
-							time.add(Double.valueOf(line));
-							break;
-						case XPOSITION:
-							xPosition.add(Double.valueOf(line) / 1000);
-							// TODO: check if this is always in mm. In the above
-							// case it is so it is being converted to m
-							break;
-						case YPOSITION:
-							// TODO: same as above
-							yPosition.add(Double.valueOf(line) / 1000);
-							break;
-						default:
-							throw new RuntimeException("More than three sets of numbers were found");
-						}
-					}
+		
+		try {
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = null;
+		    builder = builderFactory.newDocumentBuilder();
+		    
+		    Document document = builder.parse(new FileInputStream(filePath));
+		    
+			XPath xPath =  XPathFactory.newInstance().newXPath();
+			
+			NodeList nodeList = (NodeList) xPath.compile(getExpressionForDataType("Time")).evaluate(document, XPathConstants.NODESET);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				String numbers[] = nodeList.item(i).getFirstChild().getNodeValue().toString().split("\n");
+				for(String s : numbers) {
+					if(s.equals("")) continue;
+					time.add(Double.valueOf(s));
 				}
 			}
-			br.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("CMBL file was not found");
+			
+			nodeList = (NodeList) xPath.compile(getExpressionForDataType("X")).evaluate(document, XPathConstants.NODESET);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				String numbers[] = nodeList.item(i).getFirstChild().getNodeValue().toString().split("\n");
+				for(String s : numbers) {
+					if(s.equals("")) continue;
+					xPosition.add(Double.valueOf(s));
+				}
+			}
+			
+			nodeList = (NodeList) xPath.compile(getExpressionForDataType("Y")).evaluate(document, XPathConstants.NODESET);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				String numbers[] = nodeList.item(i).getFirstChild().getNodeValue().toString().split("\n");
+				for(String s : numbers) {
+					if(s.equals("")) continue;
+					yPosition.add(Double.valueOf(s));
+				}
+			}
+			
+		} catch (ParserConfigurationException e) {
+		    e.printStackTrace();  
+		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
 		}
-
+	}
+	
+	private String getExpressionForDataType(String dataType) {
+		return "//DataColumn[DataObjectName = '" + dataType + "']/ColumnCells";
 	}
 
 	/**
