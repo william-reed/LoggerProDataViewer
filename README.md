@@ -12,6 +12,7 @@ To Do:
 - Fix acceleration graph
 - Show average slopes on the lines (not displacement graph)
 - Allow graphs to be exported / copied to clipboard
+- Allow graphs to be printed
 
 Possible Future Additions
 - Plot points from a video right in the program

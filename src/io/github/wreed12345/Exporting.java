@@ -1,5 +1,6 @@
 package io.github.wreed12345;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -9,6 +10,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -40,5 +43,16 @@ public class Exporting {
 			System.err.println("Error saving PNG file (picture) of chart."); 
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Sets the image content of the clipboard to the chart supplied
+	 * @param chart chart you wish to copy to the clipboard
+	 */
+	public void copyChartToClipboard(ScatterChart<Double, Double> chart) {
+		WritableImage image = chart.snapshot(new SnapshotParameters(), null);
+		ClipboardContent cc = new ClipboardContent();
+		cc.putImage(image);
+		Clipboard.getSystemClipboard().setContent(cc);
 	}
 }

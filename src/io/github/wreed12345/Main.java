@@ -58,9 +58,10 @@ public class Main extends Application {
         MenuItem copy = new MenuItem("Copy");
         copy.setOnAction(new EventHandler<ActionEvent>() {
         	public void handle (ActionEvent t) {
-        		//TODO
+        		new Exporting().copyChartToClipboard((ScatterChart)tabPane.getSelectionModel().getSelectedItem().getContent());
         	}
         });
+        editMenu.getItems().addAll(copy);
         
         menuBar.getMenus().addAll(fileMenu, editMenu);
         
